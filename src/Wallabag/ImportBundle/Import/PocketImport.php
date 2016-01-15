@@ -2,6 +2,7 @@
 
 namespace Wallabag\ImportBundle\Import;
 
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Doctrine\ORM\EntityManager;
@@ -23,14 +24,18 @@ class PocketImport implements ImportInterface
     private $skippedEntries = 0;
     private $importedEntries = 0;
     protected $accessToken;
+    private $producer;
+    private $rabbitMQ;
 
-    public function __construct(TokenStorageInterface $tokenStorage, EntityManager $em, ContentProxy $contentProxy, Config $craueConfig)
+    public function __construct(TokenStorageInterface $tokenStorage, EntityManager $em, ContentProxy $contentProxy, Config $craueConfig, $rabbitMQ, Producer $producer)
     {
         $this->user = $tokenStorage->getToken()->getUser();
         $this->em = $em;
         $this->contentProxy = $contentProxy;
         $this->consumerKey = $craueConfig->get('pocket_consumer_key');
         $this->logger = new NullLogger();
+        $this->rabbitMQ = $rabbitMQ;
+        $this->producer = $producer;
     }
 
     public function setLogger(LoggerInterface $logger)
@@ -185,7 +190,7 @@ class PocketImport implements ImportInterface
     {
         $i = 1;
 
-        foreach ($entries as $pocketEntry) {
+        foreach ($entries as &$pocketEntry) {
             $url = isset($pocketEntry['resolved_url']) && $pocketEntry['resolved_url'] != '' ? $pocketEntry['resolved_url'] : $pocketEntry['given_url'];
 
             $existingEntry = $this->em
@@ -198,7 +203,10 @@ class PocketImport implements ImportInterface
             }
 
             $entry = new Entry($this->user);
-            $entry = $this->contentProxy->updateEntry($entry, $url);
+
+            if (!$this->rabbitMQ) {
+                $entry = $this->contentProxy->updateEntry($entry, $url);
+            }
 
             // 0, 1, 2 - 1 if the item is archived - 2 if the item should be deleted
             if ($pocketEntry['status'] == 1) {
@@ -218,6 +226,7 @@ class PocketImport implements ImportInterface
             }
 
             $entry->setTitle($title);
+            $entry->setUrl($url);
 
             // 0, 1, or 2 - 1 if the item has images in it - 2 if the item is an image
             if (isset($pocketEntry['has_image']) && $pocketEntry['has_image'] > 0 && isset($pocketEntry['images'][1])) {
@@ -231,6 +240,8 @@ class PocketImport implements ImportInterface
                 );
             }
 
+            $pocketEntry['url'] = $url;
+            $pocketEntry['userId'] = $this->user->getId();
             $this->em->persist($entry);
             ++$this->importedEntries;
 
@@ -238,9 +249,16 @@ class PocketImport implements ImportInterface
             if (($i % 20) === 0) {
                 $this->em->flush();
             }
+
             ++$i;
         }
 
         $this->em->flush();
+
+        if ($this->rabbitMQ) {
+            foreach ($entries as $entry) {
+                $this->producer->publish(serialize($entry));
+            }
+        }
     }
 }
