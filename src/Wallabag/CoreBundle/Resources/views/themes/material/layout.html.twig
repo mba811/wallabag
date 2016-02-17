@@ -43,7 +43,8 @@
             <li class="bold {% if currentRoute == 'starred' %}active{% endif %}"><a class="waves-effect" href="{{ path('starred') }}">{% trans %}starred{% endtrans %}</a></li>
             <li class="bold {% if currentRoute == 'archive' %}active{% endif %}"><a class="waves-effect" href="{{ path('archive') }}">{% trans %}archive{% endtrans %}</a></li>
             <li class="bold border-bottom {% if currentRoute == 'all' %}active{% endif %}"><a class="waves-effect" href="{{ path('all') }}">{% trans %}all{% endtrans %}</a></li>
-            <li class="bold border-bottom {% if currentRoute == 'tags' %}active{% endif %}"><a class="waves-effect" href="{{ path('tag') }}">{% trans %}tags{% endtrans %}</a></li>
+            <li class="bold {% if currentRoute == 'tags' %}active{% endif %}"><a class="waves-effect" href="{{ path('tag') }}">{% trans %}tags{% endtrans %}</a></li>
+            <li class="bold border-bottom {% if currentRoute == 'search' %}active{% endif %}"><a class="waves-effect" href="{{ path('search-form') }}">{% trans %}search{% endtrans %}</a></li>
             <li class="bold {% if currentRoute == 'config' %}active{% endif %}"><a class="waves-effect" href="{{ path('config') }}">{% trans %}config{% endtrans %}</a></li>
             {% if is_granted('ROLE_SUPER_ADMIN') %}
                 <li class="bold border-bottom {% if currentRoute == 'craue_config_settings_modify' %}active{% endif %}"><a class="waves-effect" href="{{ path('craue_config_settings_modify') }}">{% trans %}internal settings{% endtrans %}</a></li>
@@ -66,13 +67,11 @@
                     <li id="button_export"><a title="{% trans %}Export{% endtrans %}" class="nav-panel-menu button-collapse-right" href="#" data-activates="export" class="nav-panel-menu button-collapse-right"><i class="mdi-file-file-download"></i></a></li>
                 </ul>
             </div>
-            <form method="get" action="index.php">
-                <div class="input-field nav-panel-search" style="display: none">
-                    <input name="search" id="searchfield" type="search" required placeholder="{% trans %}Enter your search here{% endtrans %}">
-                    <label for="search"><i class="mdi-action-search"></i></label>
-                    <i class="mdi-navigation-close"></i>
-                </div>
-            </form>
+            <div class="input-field nav-panel-search" style="display: none">
+                {{ render(controller( "WallabagCoreBundle:Search:searchForm" )) }}
+                <label for="search"><i class="mdi-action-search"></i></label>
+                <i class="mdi-navigation-close"></i>
+            </div>
             <div class="input-field nav-panel-add" style="display: none">
                 {{ render(controller( "WallabagCoreBundle:Entry:addEntryForm" )) }}
                 <label for="add" class="active"><i class="mdi-content-add"></i></label>
