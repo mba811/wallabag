@@ -40,3 +40,8 @@ php:
 #        - ./docker/data/mariadb:/var/lib/mysql
 #    env_file:
 #        - ./docker/mariadb/env
+
+rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+        - "15672:15672"
