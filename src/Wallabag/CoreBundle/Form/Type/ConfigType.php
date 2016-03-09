@@ -33,13 +33,19 @@ class ConfigType extends AbstractType
             ->add('theme', ChoiceType::class, array(
                 'choices' => array_flip($this->themes),
                 'choices_as_values' => true,
+                'label' => 'config.form_settings.theme_label',
             ))
-            ->add('items_per_page')
+            ->add('items_per_page', null, array(
+                'label' => 'config.form_settings.items_per_page_label',
+            ))
             ->add('language', ChoiceType::class, array(
                 'choices' => array_flip($this->languages),
                 'choices_as_values' => true,
+                'label' => 'config.form_settings.language_label',
             ))
-            ->add('save', SubmitType::class)
+            ->add('save', SubmitType::class, array(
+                'label' => 'config.form.save',
+            ))
         ;
     }
 
