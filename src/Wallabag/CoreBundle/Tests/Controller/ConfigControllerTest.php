@@ -56,7 +56,7 @@ class ConfigControllerTest extends WallabagCoreTestCase
         $crawler = $client->followRedirect();
 
         $this->assertGreaterThan(1, $alert = $crawler->filter('div.messages.success')->extract(array('_text')));
-        $this->assertContains('Config saved', $alert[0]);
+        $this->assertContains('flashes.config.notice.config_saved', $alert[0]);
     }
 
     public function dataForUpdateFailed()
@@ -176,7 +176,7 @@ class ConfigControllerTest extends WallabagCoreTestCase
         $crawler = $client->followRedirect();
 
         $this->assertGreaterThan(1, $alert = $crawler->filter('div.messages.success')->extract(array('_text')));
-        $this->assertContains('Password updated', $alert[0]);
+        $this->assertContains('flashes.config.notice.password_updated', $alert[0]);
     }
 
     public function dataForUserFailed()
@@ -244,7 +244,7 @@ class ConfigControllerTest extends WallabagCoreTestCase
         $crawler = $client->followRedirect();
 
         $this->assertGreaterThan(1, $alert = $crawler->filter('body')->extract(array('_text')));
-        $this->assertContains('Information updated', $alert[0]);
+        $this->assertContains('flashes.config.notice.user_updated', $alert[0]);
     }
 
     public function dataForNewUserFailed()
@@ -345,7 +345,7 @@ class ConfigControllerTest extends WallabagCoreTestCase
         $crawler = $client->followRedirect();
 
         $this->assertGreaterThan(1, $alert = $crawler->filter('div.messages.success')->extract(array('_text')));
-        $this->assertContains('User "wallace" added', $alert[0]);
+        $this->assertContains('flashes.config.notice.user_added', $alert[0]);
 
         $em = $client->getContainer()->get('doctrine.orm.entity_manager');
         $user = $em
@@ -432,7 +432,7 @@ class ConfigControllerTest extends WallabagCoreTestCase
         $crawler = $client->followRedirect();
 
         $this->assertGreaterThan(1, $alert = $crawler->filter('div.messages.success')->extract(array('_text')));
-        $this->assertContains('RSS information updated', $alert[0]);
+        $this->assertContains('flashes.config.notice.rss_updated', $alert[0]);
     }
 
     public function dataForRssFailed()
@@ -498,7 +498,7 @@ class ConfigControllerTest extends WallabagCoreTestCase
         $crawler = $client->followRedirect();
 
         $this->assertGreaterThan(1, $alert = $crawler->filter('div.messages.success')->extract(array('_text')));
-        $this->assertContains('Tagging rules updated', $alert[0]);
+        $this->assertContains('flashes.config.notice.tagging_rules_updated', $alert[0]);
 
         $deleteLink = $crawler->filter('.delete')->last()->link();
 
@@ -507,7 +507,7 @@ class ConfigControllerTest extends WallabagCoreTestCase
 
         $crawler = $client->followRedirect();
         $this->assertGreaterThan(1, $alert = $crawler->filter('div.messages.success')->extract(array('_text')));
-        $this->assertContains('Tagging rule deleted', $alert[0]);
+        $this->assertContains('flashes.config.notice.tagging_rules_deleted', $alert[0]);
     }
 
     public function dataForTaggingRuleFailed()
@@ -601,7 +601,7 @@ class ConfigControllerTest extends WallabagCoreTestCase
         $client->submit($form, $data);
 
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
-        $this->assertContains('In demonstration mode, you can\'t change password for this user.', $client->getContainer()->get('session')->getFlashBag()->get('notice')[0]);
+        $this->assertContains('flashes.config.notice.password_not_updated_demo', $client->getContainer()->get('session')->getFlashBag()->get('notice')[0]);
 
         $config->set('demo_mode_enabled', 0);
         $config->set('demo_mode_username', 'wallabag');
