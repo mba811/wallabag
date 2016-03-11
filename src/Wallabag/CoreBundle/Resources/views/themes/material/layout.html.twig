@@ -2,12 +2,12 @@
 
 {% block css %}
     {{ parent() }}
-
     <link rel="stylesheet" href="{{ asset('bundles/wallabagcore/themes/material/css/style.min.css') }}"  media="screen,projection,print"/>
 {% endblock %}
 
 {% block scripts %}
     {{ parent() }}
+    <script src="{{ asset('bundles/wallabagcore/themes/material/js/material.min.js') }}"></script>
 {% endblock %}
 
 {% block header %}
@@ -27,7 +27,7 @@
             {% block logo %}
                 <li class="logo border-bottom">
                     <a title="{% trans %}Back to unread articles{% endtrans %}" href="{{ path('unread') }}">
-                        <img src="{{ asset('bundles/wallabagcore/themes/material/img/logo-square.png') }}" alt="wallabag logo" />
+                        <img src="{{ asset('bundles/wallabagcore/themes/_global/img/logo-square.png') }}" alt="wallabag logo" />
                     </a>
                 </li>
             {% endblock %}
