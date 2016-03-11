@@ -21,6 +21,9 @@ php:
     - 7.0
     - hhvm
 
+node_js:
+  - "5"
+
 env:
   - DB=mysql
   - DB=pgsql
